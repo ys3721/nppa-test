@@ -23,4 +23,24 @@ public class TestUrlConstants {
     public static String test8Url = "https://wlc.nppa.gov.cn/test/collection/loginout/";
 
 
+    public enum ReqHttpMethod {
+        GET("GET"),
+        POST("POST"),
+        ;
+
+        ReqHttpMethod(String method) {
+            this.method = method;
+        }
+
+        private String method;
+
+        public String getMethod() {
+            return method;
+        }
+
+        public void setMethod(String method) {
+            this.method = method;
+        }
+    }
+
 }

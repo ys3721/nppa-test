@@ -1,6 +1,8 @@
 package com.iceicelee.nppa.utils;
 
 import com.iceicelee.nppa.constants.TestUrlConstants;
+import com.iceicelee.nppa.constants.TestUrlConstants.ReqHttpMethod;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,22 +12,35 @@ import java.util.Map;
  */
 public class TestUrlProvider {
 
-    private static Map<Integer, String> testCaseId2URL;
+    private static Map<Integer, URL2Method> testCaseId2URL;
 
     static {
         testCaseId2URL = new HashMap<>();
-        testCaseId2URL.put(1, TestUrlConstants.test1Url);
-        testCaseId2URL.put(2, TestUrlConstants.test2Url);
-        testCaseId2URL.put(3, TestUrlConstants.test3Url);
-        testCaseId2URL.put(4, TestUrlConstants.test4Url);
-        testCaseId2URL.put(5, TestUrlConstants.test5Url);
-        testCaseId2URL.put(6, TestUrlConstants.test6Url);
-        testCaseId2URL.put(7, TestUrlConstants.test7Url);
-        testCaseId2URL.put(8, TestUrlConstants.test8Url);
+        testCaseId2URL.put(1, new URL2Method(TestUrlConstants.test1Url, ReqHttpMethod.POST));
+        testCaseId2URL.put(2, new URL2Method(TestUrlConstants.test2Url, ReqHttpMethod.POST));
+        testCaseId2URL.put(3, new URL2Method(TestUrlConstants.test3Url, ReqHttpMethod.POST));
+        testCaseId2URL.put(4, new URL2Method(TestUrlConstants.test4Url, ReqHttpMethod.POST));
+        testCaseId2URL.put(5, new URL2Method(TestUrlConstants.test5Url, ReqHttpMethod.POST));
+        testCaseId2URL.put(6, new URL2Method(TestUrlConstants.test6Url, ReqHttpMethod.POST));
+        testCaseId2URL.put(7, new URL2Method(TestUrlConstants.test7Url, ReqHttpMethod.POST));
+        testCaseId2URL.put(8, new URL2Method(TestUrlConstants.test8Url, ReqHttpMethod.POST));
     }
 
     public String getTestUrl(int testNum, String code) {
-        return testCaseId2URL.get(testNum) + code;
+        return testCaseId2URL.get(testNum).url + code;
     }
 
+    public ReqHttpMethod getTestUrlMethod(int testNum) {
+        return testCaseId2URL.get(testNum).httpMethod;
+    }
+
+    static class URL2Method {
+        public final String url;
+        public final ReqHttpMethod httpMethod;
+
+        URL2Method(String url, ReqHttpMethod httpMethod) {
+            this.url = url;
+            this.httpMethod = httpMethod;
+        }
+    }
 }

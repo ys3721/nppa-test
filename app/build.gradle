@@ -9,6 +9,9 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id 'org.springframework.boot' version '2.4.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
 }
 
 repositories {
@@ -17,14 +20,22 @@ repositories {
 }
 
 dependencies {
-    // Use JUnit test framework.
-    testImplementation 'junit:junit:4.13'
-
     // This dependency is used by the application.
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation "net.sf.json-lib:json-lib:2.4:jdk15"
+    // Use JUnit test framework.
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 application {
     // Define the main class for the application.
     mainClass = 'com.iceicelee.nppa.NppaPassTester'
 }
+
+
+group = 'com.iceicelee'
+version = '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+

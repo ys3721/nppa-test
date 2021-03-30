@@ -3,12 +3,26 @@
  */
 package com.iceicelee.nppa;
 
+import com.iceicelee.nppa.config.NppaTestConfig;
+import com.iceicelee.nppa.connect.HttpConnector;
+import com.iceicelee.nppa.constants.TestUrlConstants.ReqHttpMethod;
+import com.iceicelee.nppa.sign.SignService;
+import com.iceicelee.nppa.utils.EncryptUtils;
 import com.iceicelee.nppa.utils.TestUrlProvider;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * 中宣部的网络游戏防沉迷实名认证系统 接口测试</p>
@@ -21,64 +35,137 @@ public class NppaPassTester {
 
     private TestUrlProvider urlProvider;
 
+    private HttpConnector httpConnector;
+
+    private SignService signService;
+
     public NppaPassTester() {
         this.urlProvider = new TestUrlProvider();
+        this.httpConnector = new HttpConnector();
+        this.signService = new SignService();
     }
 
     public static void main(String[] args) {
+        Global global = new Global();
         NppaPassTester tester = new NppaPassTester();
-        tester.begin();
-    }
-
-    private void begin() {
-        System.out.println("选1-8");
-        int testNum = 0;
-        String testCode = null;
         try {
-            testNum = System.in.read();
-            if (testNum > 0 && testNum < 9) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                testCode = reader.readLine();
-                if (StringUtils.isEmpty(testCode)) {
-                    throw new IllegalArgumentException("测试码格式不正确!");
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("输入1-8测试用例：");
+            tester.begin();
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void begin() throws Exception {
+        System.out.println("选1-8");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String testCode = null;
+        int testNum = 0;
+        testNum = Integer.parseInt(reader.readLine());
+        System.out.println("test code > ");
+        testCode = reader.readLine();
+        if (testNum > 0 && testNum < 9) {
+            if (StringUtils.isEmpty(testCode)) {
+                throw new IllegalArgumentException("测试码格式不正确!");
+            }
+        }
         switch (testNum) {
-            case 1 :
-                testcase01(testCode);
+            case 1:
+                try {
+                    testcase01(testCode);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
-            case 2 :
+            case 2:
 
                 break;
-            case 3 :
+            case 3:
 
                 break;
-            case 4 :
+            case 4:
 
                 break;
-            case 5 :
+            case 5:
 
                 break;
-            case 6 :
+            case 6:
 
                 break;
-            case 7 :
+            case 7:
 
                 break;
-            case 8 :
+            case 8:
 
                 break;
         }
     }
 
-    private void testcase01(String testCode) {
+    /**
+     * {"ai":"100000000000000008",
+     * "name":"
+     * 某一八
+     * "idNum":"110000190101040016"}
+     * 实名认证结果返回“认证中”：
+     * 编号 预置 数据
+     * 1
+     * {"ai":"
+     *
+     * @param testCode
+     */
+    private void testcase01(String testCode) throws Exception {
         String urlStr = this.urlProvider.getTestUrl(1, testCode);
 
+        ReqHttpMethod method = this.urlProvider.getTestUrlMethod(1);
+        Map<String, String> reqPropertyMap = new HashMap<>(Global.getConfig().getAppIdAndBizIdMap());
+        reqPropertyMap.put("timestamp", System.currentTimeMillis() + "");
+
+        String ai = "100000000000000008";
+        String name = "某一八";
+        String idNum = "110000190101040016";
+
+        JSONObject jo = new JSONObject();
+        jo.put("ai", ai);
+        jo.put("name", name);
+        jo.put("idNum", idNum);
+        String jsonStr = jo.toString();
+
+        String dataContent = EncryptUtils.aesGcmEncrypt(jsonStr,
+                EncryptUtils.hexStringToByte(Global.getConfig().getSecretKey()));
+        JSONObject dataJson = new JSONObject();
+        dataJson.put("data", dataContent);
+        String postData = dataJson.toString();
+
+        String sign = this.signService.sign(reqPropertyMap, null, postData);
+        if (sign == null) {
+            //lgo
+            return;
+        }
+        reqPropertyMap.put("sign", sign);
+
+
+        URL url = new URL(urlStr);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setDoOutput(true);
+        connection.setDoInput(true);
+        connection.setUseCaches(false);
+        connection.setRequestMethod(method.getMethod());
+
+        connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+
+        connection.setRequestProperty("appId", Global.getConfig().getAppId());
+        connection.setRequestProperty("bizId", Global.getConfig().getBizId());
+        String timeMills = System.currentTimeMillis() + "";
+        connection.setRequestProperty("timestamps", timeMills);
+
+        httpConnector.send(urlStr, method, reqPropertyMap, null, postData);
     }
 
+    public TestUrlProvider getUrlProvider() {
+        return urlProvider;
+    }
+
+    public void setUrlProvider(TestUrlProvider urlProvider) {
+        this.urlProvider = urlProvider;
+    }
 
 }
