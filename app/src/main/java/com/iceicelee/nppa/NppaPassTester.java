@@ -109,34 +109,6 @@ public class NppaPassTester {
      */
     private void testcase01(String testCode) throws Exception {
         new NppaTestCase01(testCode).test();
-        /*String urlStr = this.urlProvider.getTestUrl(1, testCode);
-        ReqHttpMethod method = this.urlProvider.getTestUrlMethod(1);
-        Map<String, String> reqPropertyMap = new HashMap<>(Global.getConfig().getAppIdAndBizIdMap());
-        reqPropertyMap.put("timestamps", System.currentTimeMillis() + "");
-
-        String ai = "100000000000000008";
-        String name = "某一八";
-        String idNum = "110000190101040016";
-
-        JSONObject jo = new JSONObject();
-        jo.put("ai", ai);
-        jo.put("name", name);
-        jo.put("idNum", idNum);
-        String dataStr = jo.toString();
-
-        String dataContent = EncryptUtils.aesGcmEncrypt(dataStr,
-                EncryptUtils.hexStringToByte(Global.getConfig().getSecretKey()));
-        JSONObject dataJson = new JSONObject();
-        dataJson.put("data", dataContent);
-        String postData = dataJson.toString();
-
-        String sign = this.signService.sign(reqPropertyMap, null, postData);
-        if (sign == null) {
-            //lgo
-            return;
-        }
-        reqPropertyMap.put("sign", sign);
-        httpConnector.send(urlStr, method, reqPropertyMap, null, postData);*/
     }
 
     public TestUrlProvider getUrlProvider() {

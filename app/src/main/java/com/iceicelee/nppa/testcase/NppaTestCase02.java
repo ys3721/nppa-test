@@ -9,38 +9,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * {"ai":"100000000000000008",
- * * "name":"
- * * 某一八
- * * "idNum":"110000190101040016"
+ *  testcase2- 实名认证接口，返回“认证中"表示成功
+ *  测试数据使用 ：
+ *  {"ai":"200000000000000008",
+ *   "name":"某二八"
+ *    idNum":"110000190201040013"
  * }
- * 就用这一组数据跑testcase01吧
+ * 这个接口本质上和testcase01是一样的， 只是传过去的数据不同
  *
  * @author: Yao Shuai
- * @date: 2021/3/31 11:10
+ * @date: 2021/3/31 20:57
  */
-public class NppaTestCase01 {
+public class NppaTestCase02 {
+    
+    private String ai = "200000000000000008";
+
+    private String name = "某二八";
+
+    private String idNum ="110000190201040013";
 
     private String testCode;
 
-    private String ai = "100000000000000008";
-
-    private String name = "某一八1";
-
-    private String idNum = "110000190101040016";
-
-    public NppaTestCase01(String testCode) {
+    public NppaTestCase02(String testCode) {
         this.testCode = testCode;
     }
 
     public String assembleReqUrl() {
         return Global.getUrlProvider().getTestUrl(1, this.testCode);
-    }
-
-    private Map<String, String> buildCommonReqHeadMap() {
-        Map<String, String> headPropertyMap = new HashMap<>(Global.getConfig().getAppIdAndBizIdMap());
-        headPropertyMap.put("timestamps", System.currentTimeMillis() + "");
-        return headPropertyMap;
     }
 
     /**
@@ -76,9 +71,14 @@ public class NppaTestCase01 {
         return postBody.toString();
     }
 
-
-    private ReqHttpMethod getReqMethod() {
-        return Global.getUrlProvider().getTestUrlMethod(1);
+    private Map<String, String> buildCommonReqHeadMap() {
+        Map<String, String> headPropertyMap = new HashMap<>(Global.getConfig().getAppIdAndBizIdMap());
+        headPropertyMap.put("timestamps", System.currentTimeMillis() + "");
+        return headPropertyMap;
     }
 
+
+    private ReqHttpMethod getReqMethod() {
+        return Global.getUrlProvider().getTestUrlMethod(2);
+    }
 }
