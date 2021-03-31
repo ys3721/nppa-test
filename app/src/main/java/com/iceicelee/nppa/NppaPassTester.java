@@ -3,7 +3,6 @@
  */
 package com.iceicelee.nppa;
 
-import com.iceicelee.nppa.config.NppaTestConfig;
 import com.iceicelee.nppa.connect.HttpConnector;
 import com.iceicelee.nppa.constants.TestUrlConstants.ReqHttpMethod;
 import com.iceicelee.nppa.sign.SignService;
@@ -13,16 +12,11 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * 中宣部的网络游戏防沉迷实名认证系统 接口测试</p>
@@ -114,10 +108,9 @@ public class NppaPassTester {
      */
     private void testcase01(String testCode) throws Exception {
         String urlStr = this.urlProvider.getTestUrl(1, testCode);
-
         ReqHttpMethod method = this.urlProvider.getTestUrlMethod(1);
         Map<String, String> reqPropertyMap = new HashMap<>(Global.getConfig().getAppIdAndBizIdMap());
-        reqPropertyMap.put("timestamp", System.currentTimeMillis() + "");
+        reqPropertyMap.put("timestamps", System.currentTimeMillis() + "");
 
         String ai = "100000000000000008";
         String name = "某一八";
@@ -127,9 +120,9 @@ public class NppaPassTester {
         jo.put("ai", ai);
         jo.put("name", name);
         jo.put("idNum", idNum);
-        String jsonStr = jo.toString();
+        String dataStr = jo.toString();
 
-        String dataContent = EncryptUtils.aesGcmEncrypt(jsonStr,
+        String dataContent = EncryptUtils.aesGcmEncrypt(dataStr,
                 EncryptUtils.hexStringToByte(Global.getConfig().getSecretKey()));
         JSONObject dataJson = new JSONObject();
         dataJson.put("data", dataContent);
@@ -141,22 +134,6 @@ public class NppaPassTester {
             return;
         }
         reqPropertyMap.put("sign", sign);
-
-
-        URL url = new URL(urlStr);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setDoOutput(true);
-        connection.setDoInput(true);
-        connection.setUseCaches(false);
-        connection.setRequestMethod(method.getMethod());
-
-        connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
-
-        connection.setRequestProperty("appId", Global.getConfig().getAppId());
-        connection.setRequestProperty("bizId", Global.getConfig().getBizId());
-        String timeMills = System.currentTimeMillis() + "";
-        connection.setRequestProperty("timestamps", timeMills);
-
         httpConnector.send(urlStr, method, reqPropertyMap, null, postData);
     }
 
