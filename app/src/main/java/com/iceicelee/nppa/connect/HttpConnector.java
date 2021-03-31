@@ -17,7 +17,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class HttpConnector {
 
-    public void send(String urlStr, ReqHttpMethod reqMethod, Map<String, String> reqProps, Map<String, String> getParam, String data) throws Exception {
+    public String send(String urlStr, ReqHttpMethod reqMethod, Map<String, String> reqProps, Map<String, String> getParam, String data) throws Exception {
         if (reqMethod.getMethod().equals("GET") && !getParam.isEmpty()) {
             urlStr += "?";
             for (Map.Entry<String, String> entry : getParam.entrySet()) {
@@ -31,6 +31,8 @@ public class HttpConnector {
         connection.setUseCaches(false);
         connection.setRequestMethod(reqMethod.getMethod());
         connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+        connection.setRequestProperty("User-Agent", "NppaTester");
+
         for (Map.Entry<String, String> entry : reqProps.entrySet()) {
             connection.setRequestProperty(entry.getKey(), entry.getValue());
         }
@@ -38,11 +40,14 @@ public class HttpConnector {
         if (reqMethod.getMethod().equals("POST")) {
             connection.getOutputStream().write(data.getBytes(UTF_8));
         }
+        System.out.println(url.toString()+ "send:" + data);
         InputStream inputStream = connection.getInputStream();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line = null;
         while ((line = bufferedReader.readLine()) != null) {
             System.out.println(line);
         }
+        connection.disconnect();
+        return line;
     }
 }

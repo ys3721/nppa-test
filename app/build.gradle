@@ -34,7 +34,6 @@ application {
     mainClass = 'com.iceicelee.nppa.NppaPassTester'
 }
 
-
 group = 'com.iceicelee'
 version = '1.0-SNAPSHOT'
 sourceCompatibility = '1.8'

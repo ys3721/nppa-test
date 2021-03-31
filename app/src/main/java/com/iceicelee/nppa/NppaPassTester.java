@@ -6,6 +6,7 @@ package com.iceicelee.nppa;
 import com.iceicelee.nppa.connect.HttpConnector;
 import com.iceicelee.nppa.constants.TestUrlConstants.ReqHttpMethod;
 import com.iceicelee.nppa.sign.SignService;
+import com.iceicelee.nppa.testcase.NppaTestCase01;
 import com.iceicelee.nppa.utils.EncryptUtils;
 import com.iceicelee.nppa.utils.TestUrlProvider;
 import net.sf.json.JSONObject;
@@ -107,7 +108,8 @@ public class NppaPassTester {
      * @param testCode
      */
     private void testcase01(String testCode) throws Exception {
-        String urlStr = this.urlProvider.getTestUrl(1, testCode);
+        new NppaTestCase01(testCode).test();
+        /*String urlStr = this.urlProvider.getTestUrl(1, testCode);
         ReqHttpMethod method = this.urlProvider.getTestUrlMethod(1);
         Map<String, String> reqPropertyMap = new HashMap<>(Global.getConfig().getAppIdAndBizIdMap());
         reqPropertyMap.put("timestamps", System.currentTimeMillis() + "");
@@ -134,7 +136,7 @@ public class NppaPassTester {
             return;
         }
         reqPropertyMap.put("sign", sign);
-        httpConnector.send(urlStr, method, reqPropertyMap, null, postData);
+        httpConnector.send(urlStr, method, reqPropertyMap, null, postData);*/
     }
 
     public TestUrlProvider getUrlProvider() {
